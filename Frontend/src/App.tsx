@@ -1,12 +1,17 @@
 
 import Landingpage from "./Pages/Landingpage"
+import Header from "./Components/Header"
+import Footer from "./Components/Footer"
+import Foodpage from "./Pages/Foodpage"
 
+export default function App() {
 
-export default function App(){
-
-  return(
+  return (
     <div>
-     <Landingpage/>
+     
+      <Landingpage />
+      <Foodpage/>
+      <Footer/>
     </div>
   )
 

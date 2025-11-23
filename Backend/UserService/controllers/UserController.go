@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"context"
-	"time"
+	"fmt"
 	"myproject/config"
 	"myproject/models"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,6 +22,8 @@ func CreateUser(c *fiber.Ctx) error {
 			"error":"Invalid request body",
 		})
 	}
+
+	fmt.Print( "user details"+user.Name , user.Email)
 
 	if user.Name == "" || user.Email == ""{
 		return c.Status(400).JSON(fiber.Map{

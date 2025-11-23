@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"myproject/config"
 	"myproject/routes"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,7 +19,9 @@ func main(){
 
 	routes.SetupRoutes(app)
 
-	app.Listen((":4000"))
+	port := os.Getenv("PORT")
+
+	app.Listen(":" + port)
 }
 
 
