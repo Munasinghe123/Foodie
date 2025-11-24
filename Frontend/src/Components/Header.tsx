@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import Logo from '../Images/logo.png'
 import { Menu, X } from 'lucide-react';
 import gsap from 'gsap';
-import { Link } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -88,7 +88,10 @@ function Header() {
       >
         {/* Logo */}
         <div>
-          <img src={Logo} className="h-10 rounded-2xl" />
+          <Link to='/'>
+            <img src={Logo} className="h-10 rounded-2xl" />
+          </Link>
+
         </div>
 
         {/* Links */}
@@ -101,21 +104,26 @@ function Header() {
 
         {/* Buttons */}
         <div className="space-x-6 flex">
-          <button
-            className="px-6 py-2 rounded-full font-semibold text-white
-            bg-gradient-to-r from-orange-500 via-red-500 to-pink-500
+          <Link to='/login'>
+            <button
+              className="px-6 py-2 rounded-full font-semibold text-white
+            bg-orange-500 
             shadow-lg shadow-orange-500/40
-            hover:opacity-90 transition duration-300">
-            Login
-          </button>
+            hover:opacity-90 transition duration-300 hover:scale-105">
+              Login
+            </button>
+          </Link>
 
-          <button
-            className="px-6 py-2 rounded-full font-semibold text-white
-            border border-white/60
+          <Link to='/register'>
+            <button
+              className="px-6 py-2 rounded-full font-semibold text-white
+            border border-orange-500/90
             backdrop-blur-md 
-            hover:bg-white/10 transition duration-300">
-            Register
-          </button>
+            hover:bg-white/10 transition duration-300 hover:scale-105">
+              Register
+            </button>
+          </Link>
+
         </div>
       </div>
 
@@ -150,7 +158,7 @@ function Header() {
           >
             <div className="m-10 flex flex-col text-2xl space-y-5 items-end">
               <button onClick={closeSidebar}>
-                <X className="h-8 w-8" />
+                <X className="h-8 w-8 text-orange-500" />
               </button>
 
               <Link to="/about" className='' onClick={closeSidebar}>
@@ -172,23 +180,26 @@ function Header() {
               <Link to="/contact" onClick={closeSidebar}>
                 Contact
               </Link>
-              
-                <button
-                  className="px-6 py-2 rounded-full font-semibold text-white
-            bg-gradient-to-r from-orange-500 via-red-500 to-pink-500
+
+              <button
+                className="px-6 py-2 w-fit rounded-full font-semibold text-white
+             bg-orange-500 
             shadow-lg shadow-orange-500/40
             hover:opacity-90 transition duration-300">
-                  Login
-                </button>
+                Login
+              </button>
 
+              <Link to='/register'>
                 <button
-                  className="px-6 py-2 rounded-full font-semibold text-black
-            border border-black/60
+                  className="px-6 py-2  w-fit rounded-full font-semibold text-black
+            border border-orange-500
             backdrop-blur-md 
             hover:bg-white/10 transition duration-300">
                   Register
                 </button>
-             
+              </Link>
+
+
             </div>
           </div>
         </div>

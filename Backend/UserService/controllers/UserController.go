@@ -23,9 +23,9 @@ func CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Print( "user details"+user.Name , user.Email)
+	fmt.Print( "user details"+user.Name , user.Email ,user.Password)
 
-	if user.Name == "" || user.Email == ""{
+	if user.Name == "" || user.Email == "" || user.Password == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"error":"Name and email are required",
 		})

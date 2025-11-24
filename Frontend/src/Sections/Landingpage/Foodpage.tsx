@@ -3,7 +3,7 @@ import React from 'react'
 function Foodpage() {
   return (
     <div className='h-screen'>
-      food
+      food j
     </div>
   )
 }
