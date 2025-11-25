@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Landingpage from "./Pages/Landingpage"
 import Header from "./Components/Header"
 import Footer from "./Components/Footer"
-import Login from "./Pages/Login"
-import Register from "./Pages/Register"
+import GetStarted from "./Pages/Get-Started"
+
 
 export default function App() {
 
@@ -15,8 +15,8 @@ export default function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Landingpage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register/>} />
+          <Route path="/get-started" element={<GetStarted />} />
+          
         </Routes>
         <Footer />
       </BrowserRouter>

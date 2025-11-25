@@ -38,14 +38,14 @@ function Hero() {
                         <div className="flex gap-6 pt-2">
                             <button className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
-                                hover:bg-orange-600 transition duration-300 animate-bounce">
+                                hover:bg-orange-600 transition duration-300 animate-bounce  hover:scale-105 ">
                                 Order now
                                 <ArrowRight className="mt-1" />
                             </button>
 
 
                             <button className="px-8 py-3 rounded-full font-medium text-gray-700
-                                    border border-orange-500 hover:bg-gray-100 transition">
+                                    border border-orange-500   hover:scale-105 transition duration-300">
                                 Browse restaurants
                             </button>
                         </div>
@@ -58,8 +58,6 @@ function Hero() {
 
                 <div className='relative'>
                     <img src={HeroImage} className='object-cover w-full h-full' />
-
-
                 </div>
             </div>
 

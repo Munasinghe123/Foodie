@@ -3,6 +3,7 @@ import Logo from '../Images/logo.png'
 import { Menu, X } from 'lucide-react';
 import gsap from 'gsap';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -104,25 +105,14 @@ function Header() {
 
         {/* Buttons */}
         <div className="space-x-6 flex">
-          <Link to='/login'>
-            <button
-              className="px-6 py-2 rounded-full font-semibold text-white
-            bg-orange-500 
-            shadow-lg shadow-orange-500/40
-            hover:opacity-90 transition duration-300 hover:scale-105">
-              Login
-            </button>
-          </Link>
-
-          <Link to='/register'>
-            <button
-              className="px-6 py-2 rounded-full font-semibold text-white
-            border border-orange-500/90
-            backdrop-blur-md 
-            hover:bg-white/10 transition duration-300 hover:scale-105">
-              Register
-            </button>
-          </Link>
+          <Link to='/get-started'>
+                <button className="px-8 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md
+                                hover:bg-orange-600 transition duration-300   hover:scale-105 ">
+                  Get Started
+                  <ArrowRight className="mt-1" />
+                </button>
+              </Link>
 
         </div>
       </div>
@@ -180,22 +170,12 @@ function Header() {
               <Link to="/contact" onClick={closeSidebar}>
                 Contact
               </Link>
-
-              <button
-                className="px-6 py-2 w-fit rounded-full font-semibold text-white
-             bg-orange-500 
-            shadow-lg shadow-orange-500/40
-            hover:opacity-90 transition duration-300">
-                Login
-              </button>
-
-              <Link to='/register'>
-                <button
-                  className="px-6 py-2  w-fit rounded-full font-semibold text-black
-            border border-orange-500
-            backdrop-blur-md 
-            hover:bg-white/10 transition duration-300">
-                  Register
+              <Link to='/get-started'>
+                <button className="px-8 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md
+                                hover:bg-orange-600 transition duration-300 animate-bounce  hover:scale-105 ">
+                  Get Started
+                  <ArrowRight className="mt-1" />
                 </button>
               </Link>
 
