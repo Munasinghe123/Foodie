@@ -171,11 +171,11 @@ function Header() {
                 Contact
               </Link>
               <Link to='/get-started'>
-                <button className="px-8 py-3 rounded-full flex items-center gap-2 
-                                bg-orange-500 text-white font-medium shadow-md
-                                hover:bg-orange-600 transition duration-300 animate-bounce  hover:scale-105 ">
+                <button className="px-5 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md w-fit
+                                hover:bg-orange-600 transition duration-300   hover:scale-105 ">
                   Get Started
-                  <ArrowRight className="mt-1" />
+                  <ArrowRight className="hidden md:flex mt-1" />
                 </button>
               </Link>
 
