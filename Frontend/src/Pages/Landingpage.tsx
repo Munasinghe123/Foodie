@@ -4,7 +4,7 @@ import Hero from '../Sections/Landingpage/Hero'
 import Foodpage from '../Sections/Landingpage/Foodpage'
 function Landingpage() {
   return (
-    <div>
+    <div className=' flex flex-col'>
       <Hero/>
       <Foodpage/>
     </div>

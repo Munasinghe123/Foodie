@@ -79,7 +79,7 @@ function Header() {
         w-[90%] 
         transition-all duration-500 
         z-50
-        hidden lg:flex
+        hidden xl:flex
 
         ${scrolled
             ? "bg-black/70 shadow-xl shadow-black/30 border border-white/10"
@@ -118,7 +118,7 @@ function Header() {
       </div>
 
       {/* mobile view */}
-      <nav className="lg:hidden flex  justify-between w-full">
+      <nav className="xl:hidden flex  justify-between w-full">
         <div className="p-5 flex w-full">
           <div className='flex justify-between w-full'>
             <div>

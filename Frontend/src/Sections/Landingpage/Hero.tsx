@@ -14,17 +14,16 @@ function Hero() {
 
 
     return (
-        <div className='relative h-screen overflow-hidden pl-3 lg:pl-0  '>
+        <div className='relative xl:h-screen   '>
 
 
-            <div className='grid grid-cols-1 lg:grid-cols-2 h-screen '>
+            <div className='grid grid-cols-1  xl:grid-cols-2 h-full '>
+                {/*col 1  */}
+                <div className="relative flex flex-col justify-center">
 
-                <div className="relative flex flex-col justify-center ">
+                    <img src={HeroBackground} className='absolute -z-10 object-cover inset-0 h-full w-full' />
 
-
-                    <img src={HeroBackground} className='absolute -z-10 object-cover' />
-
-                    <div className='flex flex-col space-y-10 p-5'>
+                    <div className='flex flex-col space-y-10 p-5 '>
                         <div className="space-y-10">
                             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                                 Delicious Food <span className='text-orange-500'>Delivered</span>  To Your Door
@@ -51,11 +50,9 @@ function Hero() {
                         </div>
                     </div>
 
-
-
                 </div>
 
-
+                {/*col 2  */}
                 <div className='relative'>
                     <img src={HeroImage} className='object-cover w-full h-full' />
                 </div>
