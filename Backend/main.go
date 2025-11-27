@@ -1,16 +1,35 @@
 package main
 
-
 import (
-    "fmt"
-    "github.com/gofiber/fiber/v2"
+	"fmt"
+	"myproject/config"
+	"myproject/routes"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
-func main(){
+func main() {
 
-	fmt.Print("server started")
+	godotenv.Load()
 
-	app:= fiber.New();
+	fmt.Println("server started bro")
 
-	app.Listen((":4000"))
+	config.ConnectDB()
+
+	app := fiber.New()
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+	}))
+
+	routes.SetupRoutes(app)
+
+	port := os.Getenv("PORT")
+
+	app.Listen(":" + port)
 }
