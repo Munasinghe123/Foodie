@@ -4,11 +4,18 @@ import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import FloatingInput from '../Components/FloatingInput';
 import React, { useState, useEffect } from 'react';
 import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
+import axios from 'axios';
 
 export default function GetStarted() {
 
     const [isLogin, setIsLogin] = useState(true);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+    //form data
+    const [name, setName] = useState('');
+    const [userName, setUserName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     // Detect screen resize → update layout mode
     useEffect(() => {
@@ -16,6 +23,26 @@ export default function GetStarted() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    const handleRegister = async (e: React.FormEvent) => {
+
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:7000/api/users', {
+                name, username:userName, email, password
+            })
+
+            console.log('Registration successful:', response.data);
+            alert('Registration successful! You can now log in.');
+        } catch (error) {
+            console.error('Registration failed:', error);
+            alert('Registration failed. Please try again.');
+        }
+
+    }
+
+
 
     return (
         <div className="flex items-center justify-center min-h-screen relative py-10">
@@ -45,8 +72,20 @@ export default function GetStarted() {
                                 <div className="w-xs">
                                     <h2 className="text-3xl font-bold mb-6 text-center text-black">Login</h2>
                                     <div className="space-y-4">
-                                        <FloatingInput label="Email" type="email" icon={Mail} />
-                                        <FloatingInput label="Password" type="password" icon={KeyRound} />
+                                        <FloatingInput
+                                            label="Email"
+                                            type="email"
+                                            icon={Mail}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                        <FloatingInput
+                                            label="Password"
+                                            type="password"
+                                            icon={KeyRound}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
 
                                         <button className="w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-500 transition-colors">Login</button>
 
@@ -57,22 +96,41 @@ export default function GetStarted() {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="w-xs">
+                                <form className="w-xs" onSubmit={handleRegister}>
                                     <h2 className="text-3xl font-bold mb-6 text-center text-black">Register</h2>
                                     <div className="space-y-4">
-                                        <FloatingInput label="Full Name" type="text" icon={SquareUserRound} />
-                                        <FloatingInput label="User Name" type="text" icon={SquareUserRound} />
-                                        <FloatingInput label="Email" type="email" icon={Mail} />
-                                        <FloatingInput label="Password" type="password" icon={KeyRound} />
+                                        <FloatingInput label="Full Name" type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            icon={SquareUserRound} />
 
-                                        <button className="w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-500 transition-colors">Register</button>
+                                        <FloatingInput label="User Name" type="text"
+                                            icon={SquareUserRound}
+                                            value={userName}
+                                            onChange={(e) => setUserName(e.target.value)}
+                                        />
 
-                                        <button className="flex items-center justify-center gap-2 w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-600 transition-colors">
+                                        <FloatingInput label="Email" type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            icon={Mail} />
+                                        <FloatingInput label="Password" type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            icon={KeyRound} />
+
+                                        <button className="w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-500 transition-colors"
+                                            type='submit'>
+                                            Register
+                                        </button>
+
+                                        <button
+                                            className="flex items-center justify-center gap-2 w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-600 transition-colors">
                                             <FontAwesomeIcon icon={faGoogle} className="w-5 h-5" />
                                             Register with Google
                                         </button>
                                     </div>
-                                </div>
+                                </form>
                             )}
                         </div>
 
@@ -128,13 +186,31 @@ export default function GetStarted() {
                             {/* BACK - REGISTER */}
                             <div className="absolute inset-0 backface-hidden rotate-y-180 flex flex-col items-center justify-center p-8">
                                 <h2 className="text-3xl font-bold mb-6 text-center text-black">Register</h2>
-                                <div className="space-y-4 w-full max-w-xs">
-                                    <FloatingInput label="Full Name" type="text" icon={SquareUserRound} />
-                                    <FloatingInput label="User Name" type="text" icon={SquareUserRound} />
-                                    <FloatingInput label="Email" type="email" icon={Mail} />
-                                    <FloatingInput label="Password" type="password" icon={KeyRound} />
+                                <form className="space-y-4 w-full max-w-xs" onSubmit={handleRegister}>
+                                    <FloatingInput label="Full Name" type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        icon={SquareUserRound} />
 
-                                    <button className="w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-500 transition-colors">Register</button>
+                                    <FloatingInput label="User Name" type="text"
+                                        icon={SquareUserRound}
+                                        value={userName}
+                                        onChange={(e) => setUserName(e.target.value)}
+                                    />
+
+                                    <FloatingInput label="Email" type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        icon={Mail} />
+                                    <FloatingInput label="Password" type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        icon={KeyRound} />
+
+                                    <button className="w-full py-3 bg-orange-600 text-black rounded-md hover:bg-black hover:text-orange-500 transition-colors"
+                                        type='submit'
+                                    >
+                                        Register</button>
 
                                     <button className="w-full flex items-center justify-center py-3 bg-gray-800 text-white rounded-md" onClick={() => setIsLogin(true)}>
                                         <div className='flex gap-4'>
@@ -142,7 +218,7 @@ export default function GetStarted() {
                                         </div>
 
                                     </button>
-                                </div>
+                                </form>
                             </div>
 
                         </div>
