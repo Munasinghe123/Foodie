@@ -6,9 +6,11 @@ import (
 	"myproject/config"
 	"myproject/helpers"
 	"myproject/models"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -122,8 +124,8 @@ func LoginUser(c *fiber.Ctx) error {
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
 		HTTPOnly: true,
-		Secure:   false, // change to true in production (HTTPS)
-		SameSite: "Lax",
+		Secure:   false,  // HTTPS only in production
+		SameSite: "None", 
 	})
 
 	return c.JSON(fiber.Map{
@@ -133,7 +135,66 @@ func LoginUser(c *fiber.Ctx) error {
 			"name":     user.Name,
 			"username": user.UserName,
 			"email":    user.Email,
+			"role":     user.Role,
 		},
 	})
+}
 
+func Me(c *fiber.Ctx) error {
+
+	// 1. Get token from cookie
+	tokenStr := c.Cookies("token")
+	if tokenStr == "" {
+		return c.Status(401).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	// 2. Parse and validate token
+	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+	if err != nil || !token.Valid {
+		return c.Status(401).JSON(fiber.Map{"error": "Invalid token"})
+	}
+
+	// 3. Extract email from token
+	claims := token.Claims.(jwt.MapClaims)
+	email := claims["email"].(string)
+
+	// 4. Find user from DB
+	collection := config.GetCollection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var user models.UserModel
+	err = collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return c.Status(401).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	// 5. Return user info
+	return c.JSON(fiber.Map{
+		"user": fiber.Map{
+			"name":     user.Name,
+			"username": user.UserName,
+			"email":    user.Email,
+			"role":     user.Role,
+		},
+	})
+}
+
+func Logout(c *fiber.Ctx) error {
+	// delete cookie by setting expiry to past
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    "",
+		Expires:  time.Now().Add(-1 * time.Hour),
+		HTTPOnly: true,
+		Secure:   false,
+		SameSite: "None",
+		Path:     "/",
+	})
+
+	return c.JSON(fiber.Map{
+		"message": "Logged out successfully",
+	})
 }

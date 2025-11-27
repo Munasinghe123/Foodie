@@ -6,8 +6,14 @@ import React, { useState, useEffect } from 'react';
 import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useDispatch }  from 'react-redux';
+import { loginSuccess } from '../store/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function GetStarted() {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [isLogin, setIsLogin] = useState(true);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
@@ -64,17 +70,26 @@ export default function GetStarted() {
                 return;
             }
 
-            const response = await axios.post('http:localhost:7000/api/login', {
+            const response = await axios.post('http://localhost:7000/api/login', {
                 email, password
-            })
+            },{ withCredentials: true })
 
             setEmail('');
             setPassword('');
 
+            //adding the values to redux store
+            dispatch(loginSuccess({user:response.data.user}));
+
+            if(response.data.user.role === "admin"){
+                navigate('/admin');
+            }else{
+                navigate("/user");
+            }
+
             console.log('Login successful:', response.data);
             toast.success("Successfully logged in!");
         } catch (error: any) {
-            const message = error.response?.data?.error || "Registration failed"
+            const message = error.response?.data?.error || "Login failed"
             toast.error(message);
         }
     }
