@@ -7,15 +7,15 @@ import Footer from "./Components/Footer"
 import GetStarted from "./Pages/Get-Started"
 import AdminDashboard from "./Protected/Admin/AdminDashboard"
 import UserDashboard from "./Protected/User/UserDashboard"
-import AuthChecker from "./Auth/AuthChecker"
 
-import { useSelector } from "react-redux"
+import AuthChecker from "./Auth/AuthChecker"
+import ProtectedRoute from "./Auth/ProtectedRoute"
+
 import { Toaster } from 'react-hot-toast';
-import type { RootState } from "./store/store"
+
 
 export default function App() {
 
-  const { isAuthenticated } = useSelector((state: RootState) => state.user);
 
   return (
     <div>
@@ -25,22 +25,13 @@ export default function App() {
         <Header />
         <Routes>
 
-          {
-            isAuthenticated ? (
-              <>
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/user" element={<UserDashboard />} />
-              </>
+          <Route path="/" element={<Landingpage />} />
+          <Route path="/get-started" element={<GetStarted />} />
 
-            ) : (
-              <>
-                <Route path="/" element={<Landingpage />} />
-                <Route path="/get-started" element={<GetStarted />} />
-              </>
 
-            )
-          }
-
+          {/* protected routes */}
+          <Route path="/admin" element={<ProtectedRoute>   <AdminDashboard /></ProtectedRoute>} />
+          <Route path="/user" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
 
         </Routes>
         <Footer />

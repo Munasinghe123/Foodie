@@ -22,7 +22,7 @@ function Header() {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const dispatch= useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Animate sidebar on open/close
@@ -79,7 +79,7 @@ function Header() {
   }, []);
 
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     try {
       await axios.post(
         "http://localhost:7000/api/logout",
@@ -167,7 +167,9 @@ function Header() {
         <div className="p-5 flex w-full">
           <div className='flex justify-between w-full'>
             <div>
-              <img src={Logo} className="h-10 rounded-2xl" />
+              <Link to='/'>
+                <img src={Logo} className="h-10 rounded-2xl" />
+              </Link>
             </div>
             <div>
               <button onClick={openSideBar} className="">
@@ -215,27 +217,27 @@ function Header() {
               <Link to="/contact" onClick={closeSidebar}>
                 Contact
               </Link>
-               {isAuthenticated ? (
+              {isAuthenticated ? (
 
-            <button
-              onClick={handleLogout}
-              className="px-8 py-3 rounded-full flex items-center gap-2 
+                <button
+                  onClick={handleLogout}
+                  className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-              Logout
-              <SquareUserRound className="mt-1" />
-            </button>
+                  Logout
+                  <SquareUserRound className="mt-1" />
+                </button>
 
-          ) :
+              ) :
 
-            (<Link to='/get-started'>
-              <button className="px-8 py-3 rounded-full flex items-center gap-2 
+                (<Link to='/get-started'>
+                  <button className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-                Get Started
-                <ArrowRight className="mt-1" />
-              </button>
-            </Link>)}
+                    Get Started
+                    <ArrowRight className="mt-1" />
+                  </button>
+                </Link>)}
 
 
             </div>
