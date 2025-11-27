@@ -35,9 +35,11 @@ func CreateUser(c *fiber.Ctx) error {
 
 	user.Password = hashedPassword
 
+	user.Role = "user"
+
 	fmt.Println("hashed password", user.Password)
 
-	if user.Name == "" || user.Email == "" || user.Password == "" || user.UserName=="" {
+	if user.Name == "" || user.Email == "" || user.Password == "" || user.UserName == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Name and email are required",
 		})
@@ -84,4 +86,54 @@ func CreateUser(c *fiber.Ctx) error {
 		"id":      result.InsertedID,
 		"user":    user,
 	})
+}
+
+func LoginUser(c *fiber.Ctx) error {
+	collection := config.GetCollection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var req struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	var user models.UserModel
+	err := collection.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid email or password"})
+	}
+
+	if !helpers.CheckPasswordHash(req.Password, user.Password) {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid email or password"})
+	}
+
+	token, err := helpers.GenerateJWT(user.Email, user.Role)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate token"})
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    token,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HTTPOnly: true,
+		Secure:   false, // change to true in production (HTTPS)
+		SameSite: "Lax",
+	})
+
+	return c.JSON(fiber.Map{
+		"message": "Login successful",
+		// "token":   token,
+		"user": fiber.Map{
+			"name":     user.Name,
+			"username": user.UserName,
+			"email":    user.Email,
+		},
+	})
+
 }
