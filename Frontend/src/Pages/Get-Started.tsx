@@ -5,6 +5,7 @@ import FloatingInput from '../Components/FloatingInput';
 import React, { useState, useEffect } from 'react';
 import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
 import axios from 'axios';
+import  toast  from 'react-hot-toast';
 
 export default function GetStarted() {
 
@@ -28,16 +29,30 @@ export default function GetStarted() {
 
         e.preventDefault();
 
+        
+
         try {
+
+            if (name.trim() === "" || userName.trim() === "" || email.trim() === "" || password.trim() === "") {
+                alert('Please fill in all fields.');
+                return;
+            }
+
             const response = await axios.post('http://localhost:7000/api/users', {
-                name, username:userName, email, password
+                name, username: userName, email, password
             })
+
+            setName('');
+            setUserName('');
+            setEmail('');
+            setPassword('');
 
             console.log('Registration successful:', response.data);
             alert('Registration successful! You can now log in.');
-        } catch (error) {
-            console.error('Registration failed:', error);
-            alert('Registration failed. Please try again.');
+        } catch (error:any) {
+            const message = error.response?.data?.error || "Registration failed"
+              toast.error(message);
+           
         }
 
     }
