@@ -107,11 +107,11 @@ func LoginUser(c *fiber.Ctx) error {
 	var user models.UserModel
 	err := collection.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid email or password"})
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid email"})
 	}
 
 	if !helpers.CheckPasswordHash(req.Password, user.Password) {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid email or password"})
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid password"})
 	}
 
 	token, err := helpers.GenerateJWT(user.Email, user.Role)

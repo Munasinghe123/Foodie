@@ -1,6 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+export interface User {
+  id: string;
+  email: string;
+  role: "admin" | "user";
+}
+
+interface UserState {
+  user: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+}
+
+
+const initialState: UserState = {
   user: null,
   isAuthenticated: false,
   loading: true
@@ -26,5 +39,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout,finishLoading } = userSlice.actions;
+export const { loginSuccess, logout, finishLoading } = userSlice.actions;
 export default userSlice.reducer;
