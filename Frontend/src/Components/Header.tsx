@@ -4,13 +4,26 @@ import { Menu, X } from 'lucide-react';
 import gsap from 'gsap';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
+import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
+import { logout } from '../store/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
-  const [scrolled, setScrolled] = useState(false);
 
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+
+  const [scrolled, setScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Animate sidebar on open/close
   useEffect(() => {
@@ -65,6 +78,23 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:7000/api/logout",
+        {},
+        { withCredentials: true }
+      );
+
+      dispatch(logout());
+      navigate('/');
+      toast.success("Logged out!");
+    } catch (err) {
+      toast.error("Logout failed");
+    }
+  }
+
   return (
     <>
 
@@ -105,14 +135,29 @@ function Header() {
 
         {/* Buttons */}
         <div className="space-x-6 flex">
-          <Link to='/get-started'>
-                <button className="px-8 py-3 rounded-full flex items-center gap-2 
+
+          {isAuthenticated ? (
+
+            <button
+              onClick={handleLogout}
+              className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-                  Get Started
-                  <ArrowRight className="mt-1" />
-                </button>
-              </Link>
+              Logout
+              <SquareUserRound className="mt-1" />
+            </button>
+
+          ) :
+
+            (<Link to='/get-started'>
+              <button className="px-8 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md
+                                hover:bg-orange-600 transition duration-300   hover:scale-105 ">
+                Get Started
+                <ArrowRight className="mt-1" />
+              </button>
+            </Link>)}
+
 
         </div>
       </div>
@@ -122,7 +167,9 @@ function Header() {
         <div className="p-5 flex w-full">
           <div className='flex justify-between w-full'>
             <div>
-              <img src={Logo} className="h-10 rounded-2xl" />
+              <Link to='/'>
+                <img src={Logo} className="h-10 rounded-2xl" />
+              </Link>
             </div>
             <div>
               <button onClick={openSideBar} className="">
@@ -170,14 +217,27 @@ function Header() {
               <Link to="/contact" onClick={closeSidebar}>
                 Contact
               </Link>
-              <Link to='/get-started'>
-                <button className="px-5 py-3 rounded-full flex items-center gap-2 
-                                bg-orange-500 text-white font-medium shadow-md w-fit
+              {isAuthenticated ? (
+
+                <button
+                  onClick={handleLogout}
+                  className="px-8 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-                  Get Started
-                  <ArrowRight className="hidden md:flex mt-1" />
+                  Logout
+                  <SquareUserRound className="mt-1" />
                 </button>
-              </Link>
+
+              ) :
+
+                (<Link to='/get-started'>
+                  <button className="px-8 py-3 rounded-full flex items-center gap-2 
+                                bg-orange-500 text-white font-medium shadow-md
+                                hover:bg-orange-600 transition duration-300   hover:scale-105 ">
+                    Get Started
+                    <ArrowRight className="mt-1" />
+                  </button>
+                </Link>)}
 
 
             </div>
