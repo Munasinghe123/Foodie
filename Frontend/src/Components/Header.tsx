@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
-import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
+import { SquareUserRound, ChevronDown, Settings, User } from 'lucide-react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -15,15 +15,20 @@ import { useNavigate } from 'react-router-dom';
 
 function Header() {
 
-  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.user);
 
   const [scrolled, setScrolled] = useState(false);
+  const [clicked, setClicked] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleDropdown = () => {
+    setClicked(!clicked);
+  }
 
   // Animate sidebar on open/close
   useEffect(() => {
@@ -110,6 +115,7 @@ function Header() {
         transition-all duration-500 
         z-50
         hidden xl:flex
+        overflow-visible
 
         ${scrolled
             ? "bg-black/70 shadow-xl shadow-black/30 border border-white/10"
@@ -138,15 +144,71 @@ function Header() {
 
           {isAuthenticated ? (
 
-            <button
-              onClick={handleLogout}
-              className="px-8 py-3 rounded-full flex items-center gap-2 
-                                bg-orange-500 text-white font-medium shadow-md
-                                hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-              Logout
-              <SquareUserRound className="mt-1" />
-            </button>
+            <div className='relative overflow-visible z-50'>
 
+              <button
+                onClick={handleDropdown}
+                className="
+                  flex items-center gap-2 px-4 py-2 
+                  bg-orange-500 font-medium
+                  text-white 
+                  hover:bg-orange-600 
+                  rounded-md 
+                  transition-all duration-200
+                "
+              >
+                {user?.name}
+                <ChevronDown
+                  className={`transition-transform duration-200 ${clicked ? "rotate-180" : ""}`}
+                />
+
+                {clicked && (
+                  <div
+                    className="
+                    absolute right-0 top-full mt-2
+                    w-48 bg-white rounded-xl shadow-xl 
+                    border border-black/10 
+                    z-[999] overflow-hidden
+                  "
+                  >
+
+                    <Link
+                      to={user?.role === "admin" ? "/admin" : "/user"}
+                      className="
+                    flex items-center gap-3 px-4 py-3 w-full
+                    text-gray-700 hover:bg-gray-100 
+                    transition-all duration-200
+                  ">
+                      <User className="text-orange-500" />
+                      Profile
+                    </Link>
+
+
+                    <button className="
+                    flex items-center gap-3 px-4 py-3 w-full
+                    text-gray-700 hover:bg-gray-100 
+                    transition-all duration-200
+                  ">
+                      <Settings className="text-orange-500" />
+                      Settings
+                    </button>
+
+
+                    <button
+                      onClick={handleLogout}
+                      className="
+                    flex items-center gap-3 px-4 py-3 w-full
+                    text-red-600 hover:bg-red-50
+                    transition-all duration-200
+                  "
+                    >
+                      <SquareUserRound className="text-red-500" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </button>
+            </div>
           ) :
 
             (<Link to='/get-started'>
@@ -157,8 +219,6 @@ function Header() {
                 <ArrowRight className="mt-1" />
               </button>
             </Link>)}
-
-
         </div>
       </div>
 
@@ -218,15 +278,39 @@ function Header() {
                 Contact
               </Link>
               {isAuthenticated ? (
+                <>
 
-                <button
-                  onClick={handleLogout}
-                  className="px-8 py-3 rounded-full flex items-center gap-2 
+                  <Link
+                    to={user?.role === "admin" ? "/admin" : "/user"}
+                    className="
+                    flex items-center justify-end gap-3 px-4  w-full
+                    text-gray-700 hover:bg-gray-100 
+                    transition-all duration-200
+                  ">
+                    <User className="text-orange-500" />
+                    Profile
+                  </Link>
+
+
+                  <button className="
+                    flex items-center justify-end gap-3 px-4  w-full
+                    text-gray-700 hover:bg-gray-100 
+                    transition-all duration-200
+                  ">
+                    <Settings className="text-orange-500" />
+                    Settings
+                  </button>
+
+                  <button
+                    onClick={handleLogout}
+                    className="px-8 py-3 rounded-full flex items-center gap-4
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-                  Logout
-                  <SquareUserRound className="mt-1" />
-                </button>
+                    <SquareUserRound className="mt-1" />
+                    Logout
+
+                  </button>
+                </>
 
               ) :
 

@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   role: "admin" | "user";
+  name:string
 }
 
 interface UserState {
@@ -11,7 +12,6 @@ interface UserState {
   isAuthenticated: boolean;
   loading: boolean;
 }
-
 
 const initialState: UserState = {
   user: null,
