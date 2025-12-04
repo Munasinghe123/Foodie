@@ -1,25 +1,18 @@
 import React from 'react'
 
 import { ArrowRight } from 'lucide-react';
-import { useRef, useEffect } from 'react';
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 import HeroImage from '../../Images/hero.jpg';
 import HeroBackground from '../../Images/hero-background.png';
 
-gsap.registerPlugin(ScrollTrigger);
-
 function Hero() {
 
-
     return (
-        <div className='relative xl:h-screen   '>
+        <div className='relative h-screen '>
 
 
-            <div className='grid grid-cols-1  xl:grid-cols-2 h-full '>
+            <div className='grid grid-cols-1  xl:grid-cols-2 h-full min-h-screen '>
                 {/*col 1  */}
-                <div className="relative flex flex-col justify-center">
+                <div className="relative h-full flex flex-col py-20 justify-center">
 
                     <img src={HeroBackground} className='absolute -z-10 object-cover inset-0 h-full w-full' />
 
@@ -53,7 +46,7 @@ function Hero() {
                 </div>
 
                 {/*col 2  */}
-                <div className='relative'>
+                <div className='relative bg-red-700 '>
                     <img src={HeroImage} className='object-cover w-full h-full' />
                 </div>
             </div>

@@ -1,11 +1,11 @@
-import React from 'react'
 
-function UserDashboard() {
-  return (
-    <div>
-      user dashboard
-    </div>
+import BecomeAPartner from "../../Sections/User/BecomeAPartner"
+
+export default function UserDashboard (){
+
+  return(
+    <>
+      <BecomeAPartner/>
+    </>
   )
 }
-
-export default UserDashboard
