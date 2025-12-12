@@ -114,7 +114,7 @@ func LoginUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid password"})
 	}
 
-	token, err := helpers.GenerateJWT(user.Email, user.Role)
+	token, err := helpers.GenerateJWT(user.Email, user.Role, user.UserID)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate token"})
 	}

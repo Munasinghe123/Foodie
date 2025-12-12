@@ -37,7 +37,7 @@ func ConnectDB() {
 
 	DB = client.Database(os.Getenv("DB_NAME"))
 
-	fmt.Println("connected to user database")
+	fmt.Println("connected to  database")
 
 }
 

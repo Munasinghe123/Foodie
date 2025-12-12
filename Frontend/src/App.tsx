@@ -9,6 +9,7 @@ import AdminDashboard from "./Protected/Admin/AdminDashboard"
 import UserDashboard from "./Protected/User/UserDashboard"
 import UnAuthorized from "./Pages/UnAuthorized"
 import RegisterResturant from "./Pages/RegisterResturant"
+import Success from "./Pages/Payment/Success"
 
 import AuthChecker from "./Auth/AuthChecker"
 import ProtectedRoute from "./Auth/ProtectedRoute"
@@ -36,8 +37,8 @@ export default function App() {
 
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin">   <AdminDashboard /></ProtectedRoute>} />
           <Route path="/user" element={<ProtectedRoute requiredRole="user"><UserDashboard /></ProtectedRoute>} />
-          <Route path="/register-resturant" element={<ProtectedRoute requiredRole="user"><RegisterResturant/></ProtectedRoute>}/>
-
+          <Route path="/register-resturant" element={<ProtectedRoute requiredRole="user"><RegisterResturant /></ProtectedRoute>} />
+          <Route path="/payment/success" element={<ProtectedRoute ><Success /></ProtectedRoute>} />
         </Routes>
         <Footer />
       </BrowserRouter>
