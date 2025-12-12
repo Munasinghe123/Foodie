@@ -185,7 +185,7 @@ func StripeWebhook(c *fiber.Ctx) error {
 		result, err := collection.UpdateOne(
 			context.Background(),
 			bson.M{"_id": objID},
-			bson.M{"$set": bson.M{"Paid": "paid"}},
+			bson.M{"$set": bson.M{"paid": "paid"}},
 		)
 
 		if err != nil {

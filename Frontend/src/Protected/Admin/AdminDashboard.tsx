@@ -7,7 +7,8 @@ function AdminDashboard() {
   const{user} = useSelector((state:RootState)=>state.user);
 
   return (
-    <div>
+    <div className='h-screen '>
+   
       admin dashboard
       <h1>Welcome {user?.name}</h1>
     </div>
