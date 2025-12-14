@@ -23,7 +23,6 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	userID := c.Locals("userID").(string)
 
 	restaurant := new(models.RestaurantModel)
 
@@ -37,12 +36,6 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 		})
 	}
 
-	ownerObjID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Invalid user ID"})
-	}
-
-	restaurant.OwnerId = ownerObjID
 	restaurant.Status = "pending"
 	restaurant.Paid = "unpaid"
 
@@ -203,4 +196,37 @@ func StripeWebhook(c *fiber.Ctx) error {
 
 	// Return 200 to acknowledge receipt of the event
 	return c.SendStatus(200)
+}
+
+func GetAllResautrants(c *fiber.Ctx)error{
+
+	collection:=config.GetCollection("restaurants")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+	var restaurants []models.RestaurantModel
+
+	cursor,err:=collection.Find(ctx,bson.M{})
+	if err!=nil{
+		return c.Status(500).JSON(fiber.Map{"error":"Failed to fetch restaurants"})
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx){
+		var restaurant models.RestaurantModel
+		if err:=cursor.Decode(&restaurant);err!=nil{
+			return c.Status(500).JSON(fiber.Map{"error":"Failed to decode restaurant"})
+		}
+		restaurants=append(restaurants,restaurant)
+	}
+
+	if len(restaurants) == 0 {
+		return c.JSON(fiber.Map{
+			"restaurants": []string{}, 
+		})
+	}
+
+	return c.JSON(fiber.Map{"restaurants":restaurants})
+
 }

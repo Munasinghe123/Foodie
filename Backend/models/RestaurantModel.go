@@ -4,7 +4,6 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type RestaurantModel struct {
 	ResturantID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	OwnerId        primitive.ObjectID `json:"ownerId" bson:"ownerId"`
 	OwnerName      string             `json:"ownerName" bson:"ownerName"`
 	Phone          string             `json:"phone" bson:"phone"`
 	NIC            string             `json:"nic" bson:"nic"`

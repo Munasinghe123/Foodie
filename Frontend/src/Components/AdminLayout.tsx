@@ -74,7 +74,7 @@ export default function AdminLayout() {
   }, [open]);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-gray-300 overflow-hidden">
 
       {/* MOBILE TOGGLE BUTTON */}
       <button
@@ -127,7 +127,7 @@ export default function AdminLayout() {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-6 overflow-y-auto xl:ml-64 ">
+      <main className="flex-1 p-6 overflow-y-auto ">
         <Outlet />
       </main>
     </div>

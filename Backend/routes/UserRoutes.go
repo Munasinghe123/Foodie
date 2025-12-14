@@ -13,4 +13,5 @@ func SetupRoutes(app *fiber.App) {
 	api.Post("/login", controllers.LoginUser)
 	api.Get("/me", controllers.Me)
 	api.Post("/logout",controllers.Logout)
+	api.Get("/allUsers" , controllers.GetAllUsers);
 }

@@ -44,6 +44,7 @@ export default function App() {
           <Route path="/" element={<Landingpage />} />
           <Route path="/get-started" element={<GetStarted />} />
           <Route path="/unauthorized" element={<UnAuthorized />} />
+           <Route path="/register-resturant" element={<RegisterResturant />} />
 
           {/* protected routes */}
 
@@ -66,7 +67,6 @@ export default function App() {
 
 
           <Route path="/user" element={<ProtectedRoute requiredRole="user"><UserDashboard /></ProtectedRoute>} />
-          <Route path="/register-resturant" element={<ProtectedRoute requiredRole="user"><RegisterResturant /></ProtectedRoute>} />
           <Route path="/payment/success" element={<ProtectedRoute ><Success /></ProtectedRoute>} />
         </Routes>
         {role !== "admin" && <Footer />}
