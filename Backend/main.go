@@ -29,7 +29,7 @@ func main() {
 		AllowOrigins:     "http://localhost:5173",
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		AllowMethods:     "GET, POST, PUT,PATCH, DELETE, OPTIONS",
 	}))
 
 	routes.SetupRoutes(app)

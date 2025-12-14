@@ -23,7 +23,6 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	userID := c.Locals("userID").(string)
 
 	restaurant := new(models.RestaurantModel)
 
@@ -37,12 +36,6 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 		})
 	}
 
-	ownerObjID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Invalid user ID"})
-	}
-
-	restaurant.OwnerId = ownerObjID
 	restaurant.Status = "pending"
 	restaurant.Paid = "unpaid"
 
@@ -185,7 +178,7 @@ func StripeWebhook(c *fiber.Ctx) error {
 		result, err := collection.UpdateOne(
 			context.Background(),
 			bson.M{"_id": objID},
-			bson.M{"$set": bson.M{"Paid": "paid"}},
+			bson.M{"$set": bson.M{"paid": "paid"}},
 		)
 
 		if err != nil {
@@ -203,4 +196,82 @@ func StripeWebhook(c *fiber.Ctx) error {
 
 	// Return 200 to acknowledge receipt of the event
 	return c.SendStatus(200)
+}
+
+func GetAllResautrants(c *fiber.Ctx)error{
+
+	collection:=config.GetCollection("restaurants")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+	var restaurants []models.RestaurantModel
+
+	cursor,err:=collection.Find(ctx,bson.M{})
+	if err!=nil{
+		return c.Status(500).JSON(fiber.Map{"error":"Failed to fetch restaurants"})
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx){
+		var restaurant models.RestaurantModel
+		if err:=cursor.Decode(&restaurant);err!=nil{
+			return c.Status(500).JSON(fiber.Map{"error":"Failed to decode restaurant"})
+		}
+		restaurants=append(restaurants,restaurant)
+	}
+
+	if len(restaurants) == 0 {
+		return c.JSON(fiber.Map{
+			"restaurants": []string{}, 
+		})
+	} 
+	fmt.Println("all restaurants kk", restaurants);	
+	return c.JSON(fiber.Map{"restaurants":restaurants})
+
+}
+
+func UpdateRestaurantStatus(c *fiber.Ctx) error {
+    collection := config.GetCollection("restaurants")
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+	
+    idParam := c.Params("id")
+    restaurantID, err := primitive.ObjectIDFromHex(idParam)
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid restaurant ID"})
+    }
+
+    var body struct {
+        Status string `json:"status"`
+    }
+
+    if err := c.BodyParser(&body); err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+    }
+
+    if body.Status != "approved" && body.Status != "rejected" && body.Status != "pending" {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid status value"})
+    }
+
+    update := bson.M{
+        "$set": bson.M{
+            "status": body.Status,
+        },
+    }
+
+    result, err := collection.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Failed to update status"})
+    }
+
+    if result.MatchedCount == 0 {
+        return c.Status(404).JSON(fiber.Map{"error": "Restaurant not found"})
+    }
+
+    return c.JSON(fiber.Map{
+        "message": "Restaurant status updated successfully",
+        "id":      idParam,
+        "status":  body.Status,
+    })
 }

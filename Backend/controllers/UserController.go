@@ -198,3 +198,44 @@ func Logout(c *fiber.Ctx) error {
 		"message": "Logged out successfully",
 	})
 }
+
+func GetAllUsers(c *fiber.Ctx) error {
+    collection := config.GetCollection("users")
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    var users []models.UserModel
+
+    cursor, err := collection.Find(ctx, bson.M{})
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": "Failed to fetch users",
+        })
+    }
+    defer cursor.Close(ctx)
+
+    for cursor.Next(ctx) {
+        var user models.UserModel
+        if err := cursor.Decode(&user); err != nil {
+            return c.Status(500).JSON(fiber.Map{
+                "error": "Error decoding user",
+            })
+        }
+
+        user.Password = ""
+        users = append(users, user)
+    }
+
+    if len(users) == 0 {
+        return c.JSON(fiber.Map{
+            "users": []string{}, 
+        })
+    }
+
+	fmt.Print("users", users);  //debugging
+
+    return c.JSON(fiber.Map{
+        "users": users,
+    })
+}
+

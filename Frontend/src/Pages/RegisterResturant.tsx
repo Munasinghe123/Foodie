@@ -9,12 +9,15 @@ import {
   Hotel,
   Utensils,
   Upload,
-  Dot
+  Dot,
+  Mail
 } from "lucide-react";
 import axios from "axios";
 
 export default function RegisterRestaurant() {
   const [step, setStep] = useState(1);
+  const [resturantId, setRestaurantId] = useState<String>("");
+  const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
     ownerName: "",
@@ -40,6 +43,12 @@ export default function RegisterRestaurant() {
 
     const restaurantId = response.data.id;
 
+    setRestaurantId(restaurantId);
+    setShowModal(true);
+
+  };
+
+  const handlePayment = async (restaurantId: String) => {
     const paymentRes = await axios.post(
       "http://localhost:7000/api/restaurant/pay",
       { restaurantId },
@@ -47,8 +56,7 @@ export default function RegisterRestaurant() {
     );
 
     window.location.href = paymentRes.data.url;
-
-  };
+  }
 
   //  STEPPER UI 
   const StepCircle = ({ active }: { active: boolean }) => (
@@ -85,9 +93,9 @@ export default function RegisterRestaurant() {
             />
 
             <FloatingInput
-              icon={Phone}
+              icon={Mail}
               label="Email Address"
-              value={formData.phone}
+              value={formData.email}
               onChange={(e) => updateField("email", e.target.value)}
             />
 
@@ -195,18 +203,56 @@ export default function RegisterRestaurant() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-10 min-h-screen flex flex-col items-center justify-center space-y-5 ">
+    <>
 
-      {/*STEP INDICATOR  */}
-      <div className="flex items-center gap-6">
-        <StepCircle active={step === 1} />
-        <div className="w-16 h-1 bg-gray-300"></div>
-        <StepCircle active={step === 2} />
-        <div className="w-16 h-1 bg-gray-300"></div>
-        <StepCircle active={step === 3} />
+      <div className="max-w-2xl mx-auto p-10 min-h-screen flex flex-col items-center justify-center space-y-5 ">
+
+        {/*STEP INDICATOR  */}
+        <div className="flex items-center gap-6">
+          <StepCircle active={step === 1} />
+          <div className="w-16 h-1 bg-gray-300"></div>
+          <StepCircle active={step === 2} />
+          <div className="w-16 h-1 bg-gray-300"></div>
+          <StepCircle active={step === 3} />
+        </div>
+
+        {renderStep()}
       </div>
 
-      {renderStep()}
-    </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-[90%] max-w-md text-center space-y-6 animate-fadeIn">
+
+            <h2 className="text-2xl font-bold text-gray-800">
+              Restaurant Registered 🎉
+            </h2>
+
+            <p className="text-gray-600">
+              Your restaurant was successfully submitted.
+              Complete the registration by making the payment.
+            </p>
+
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-6 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+              >
+                Close
+              </button>
+
+              <button
+                onClick={handlePayment.bind(null, resturantId)}
+                className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+              >
+                Pay Now
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+    </>
   );
 }
