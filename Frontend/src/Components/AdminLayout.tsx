@@ -127,7 +127,7 @@ export default function AdminLayout() {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-1 overflow-y-auto ">
+      <main className="flex-1 w-full  h-full items-center justify-center p-1 overflow-y-auto ">
         <Outlet />
       </main>
     </div>

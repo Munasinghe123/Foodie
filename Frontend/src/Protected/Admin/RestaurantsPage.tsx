@@ -26,23 +26,30 @@ function RestaurantsPage() {
 
 
   return (
-    <div>
-      <div className="w-full  overflow-x-auto">
-        <table className="min-w-full border-separate border-spacing-y-3 border-spacing-x-3">
+    <div className="h-full flex items-center justify-center py-4 xl:py-0">
+      <div className="w-full flex items-center justify-center overflow-x-auto px-2">
+        <table className="border-separate min-w-full border-spacing-y-3 border-spacing-x-3 mx-auto pl-[300px] xl:pl-0">
+
+
           <thead>
             <tr className="text-center">
 
-              <th className="relative ">
-                <span className="absolute inset-0 flex items-center justify-center
-                   text-2xl lg:text-4xl font-extrabold text-orange-400
-                   pointer-events-none select-none">
+              <th className="relative sticky bg-white left-0 z-30  p-6">
+
+                <span
+                  className="absolute inset-0 flex items-center justify-center
+                      text-2xl lg:text-4xl font-extrabold text-orange-400
+                      pointer-events-none select-none"
+                  >
                   Restaurant
                 </span>
 
                 <div className="relative mt-6 z-10 flex flex-col items-center">
                   <span className="text-xl font-bold">Name</span>
                 </div>
+
               </th>
+
 
               <th className="relative p-6">
                 <span className="absolute inset-0 flex items-center justify-center 
@@ -68,7 +75,7 @@ function RestaurantsPage() {
                 </div>
               </th>
 
-  
+
               <th className="relative p-6">
                 <span className="absolute inset-0 flex items-center justify-center 
                    text-2xl lg:text-4xl font-extrabold text-orange-400 
