@@ -2,11 +2,23 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+type Restaurant = {
+  id: string;
+  ownerName: string;
+  phone: string;
+  nic: string;
+  email: string;
+  restaurantName: string;
+  address: string;
+  city: string;
+  category: string;
+  logo?: string;
+  status: string;
+};
+
 function RestaurantsPage() {
 
-
-  const [restaurants, setRestaurants] = useState([]);
-
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   useEffect(() => {
 
@@ -17,12 +29,34 @@ function RestaurantsPage() {
         const allRestaurants = restaurantsResponse.data.restaurants;
         setRestaurants(allRestaurants);
 
+        console.log(allRestaurants);
+
       } catch (error) {
         console.error("Error fetching admin stats:", error);
       }
     };
     fetchStats();
   }, [])
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      await axios.patch(
+        `http://localhost:7000/api/restaurant/${id}/updateStatus`,
+        { status },
+        { withCredentials: true }
+      );
+
+      // Refresh restaurants list after update
+      setRestaurants(prev =>
+        prev.map(r =>
+          r.id === id ? { ...r, status: status } : r
+        )
+      );
+
+    } catch (error) {
+      console.error("Error updating restaurant status:", error);
+    }
+  };
 
 
   return (
@@ -34,13 +68,13 @@ function RestaurantsPage() {
           <thead>
             <tr className="text-center">
 
-              <th className="relative sticky bg-white left-0 z-30  p-6">
+              <th className="relative sticky w-[140px] xl:w-[180px] bg-white left-0 z-30  p-6">
 
                 <span
                   className="absolute inset-0 flex items-center justify-center
                       text-2xl lg:text-4xl font-extrabold text-orange-400
                       pointer-events-none select-none"
-                  >
+                >
                   Restaurant
                 </span>
 
@@ -51,7 +85,7 @@ function RestaurantsPage() {
               </th>
 
 
-              <th className="relative p-6">
+              <th className="relative p-6 w-[140px] xl:w-[180px]">
                 <span className="absolute inset-0 flex items-center justify-center 
                    text-2xl lg:text-4xl font-extrabold text-orange-400 
                    pointer-events-none select-none">
@@ -63,7 +97,7 @@ function RestaurantsPage() {
                 </div>
               </th>
 
-              <th className="relative p-6">
+              <th className="relative p-6 w-[140px] xl:w-[180px]">
                 <span className="absolute inset-0 flex items-center justify-center 
                    text-2xl lg:text-4xl font-extrabold text-orange-400
                    pointer-events-none select-none">
@@ -76,7 +110,7 @@ function RestaurantsPage() {
               </th>
 
 
-              <th className="relative p-6">
+              <th className="relative p-6 w-[140px] xl:w-[180px]">
                 <span className="absolute inset-0 flex items-center justify-center 
                    text-2xl lg:text-4xl font-extrabold text-orange-400 
                    pointer-events-none select-none">
@@ -94,7 +128,7 @@ function RestaurantsPage() {
 
           <tbody>
             {restaurants.map((restaurant: any) => (
-              <tr key={restaurant._id}>
+              <tr key={restaurant.id}>
 
                 {/* STICKY COLUMN */}
                 <td className="p-4 bg-gray-200 rounded-lg shadow-sm 
@@ -122,10 +156,14 @@ function RestaurantsPage() {
 
                 <td className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 
                        text-center flex justify-center gap-3">
-                  <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow">
+                  <button
+                    onClick={() => updateStatus(restaurant.id, "approved")}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow">
                     Approve
                   </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm shadow">
+                  <button
+                    onClick={() => updateStatus(restaurant.id, "rejected")}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm shadow">
                     Reject
                   </button>
                 </td>

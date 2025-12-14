@@ -13,4 +13,5 @@ func SetupResturantRoutes(app *fiber.App) {
 	api.Post("/register", controllers.RegisterRestaurant);
 	api.Post("/pay", controllers.StripeCheckoutSession);
 	api.Get("/allRestaurants", controllers.GetAllResautrants);
+	api.Patch("/:id/updateStatus", controllers.UpdateRestaurantStatus);
 }
