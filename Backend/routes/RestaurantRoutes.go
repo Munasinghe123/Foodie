@@ -2,7 +2,8 @@ package routes
 
 import (
 	"myproject/controllers"
-	
+	"myproject/middleware"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,4 +15,6 @@ func SetupResturantRoutes(app *fiber.App) {
 	api.Post("/pay", controllers.StripeCheckoutSession);
 	api.Get("/allRestaurants", controllers.GetAllResautrants);
 	api.Patch("/:id/updateStatus", controllers.UpdateRestaurantStatus);
+	api.Get("/showClaimButton", middleware.AuthRequired,controllers.ShowClaimButton);
+	api.Patch("/claim",middleware.AuthRequired,controllers.ClaimRestaurant)
 }

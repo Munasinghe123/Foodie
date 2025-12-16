@@ -12,6 +12,8 @@ import RegisterResturant from "./Pages/RegisterResturant"
 import Success from "./Pages/Payment/Success"
 import RestaurantsPage from "./Protected/Admin/RestaurantsPage"
 import UsersPage from "./Protected/Admin/UsersPage"
+import Restaurants from "./Pages/Restaurants"
+import RestaurantOwner from "./Protected/Restaurant-Owner/RestaurantOwner"
 
 import AuthChecker from "./Auth/AuthChecker"
 import ProtectedRoute from "./Auth/ProtectedRoute"
@@ -44,7 +46,10 @@ export default function App() {
           <Route path="/" element={<Landingpage />} />
           <Route path="/get-started" element={<GetStarted />} />
           <Route path="/unauthorized" element={<UnAuthorized />} />
-           <Route path="/register-resturant" element={<RegisterResturant />} />
+          <Route path="/register-resturant" element={<RegisterResturant />} />
+          <Route path="/restaurants" element={<Restaurants />} />
+          <Route path="/payment/success" element={<Success />} />
+
 
           {/* protected routes */}
 
@@ -66,8 +71,9 @@ export default function App() {
           </Route>
 
 
-          <Route path="/user" element={<ProtectedRoute requiredRole="user"><UserDashboard /></ProtectedRoute>} />
-          <Route path="/payment/success" element={<ProtectedRoute ><Success /></ProtectedRoute>} />
+          <Route path="/user" element={<ProtectedRoute ><UserDashboard /></ProtectedRoute>} />
+          <Route path="/restaurant-owner" element={<ProtectedRoute requiredRole="restaurantOwner"><RestaurantOwner /></ProtectedRoute>} />
+
         </Routes>
         {role !== "admin" && <Footer />}
 

@@ -3,11 +3,11 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"myproject/config"
 	"myproject/models"
 	"os"
 	"time"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stripe/stripe-go/v79"
@@ -23,7 +23,6 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-
 	restaurant := new(models.RestaurantModel)
 
 	var err error
@@ -38,6 +37,7 @@ func RegisterRestaurant(c *fiber.Ctx) error {
 
 	restaurant.Status = "pending"
 	restaurant.Paid = "unpaid"
+	restaurant.OwnerID = nil
 
 	result, err := collection.InsertOne(ctx, restaurant)
 	if err != nil {
@@ -198,80 +198,174 @@ func StripeWebhook(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func GetAllResautrants(c *fiber.Ctx)error{
+func GetAllResautrants(c *fiber.Ctx) error {
 
-	collection:=config.GetCollection("restaurants")
+	collection := config.GetCollection("restaurants")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
+	defer cancel()
 
 	var restaurants []models.RestaurantModel
 
-	cursor,err:=collection.Find(ctx,bson.M{})
-	if err!=nil{
-		return c.Status(500).JSON(fiber.Map{"error":"Failed to fetch restaurants"})
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch restaurants"})
 	}
 
 	defer cursor.Close(ctx)
 
-	for cursor.Next(ctx){
+	for cursor.Next(ctx) {
 		var restaurant models.RestaurantModel
-		if err:=cursor.Decode(&restaurant);err!=nil{
-			return c.Status(500).JSON(fiber.Map{"error":"Failed to decode restaurant"})
+		if err := cursor.Decode(&restaurant); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to decode restaurant"})
 		}
-		restaurants=append(restaurants,restaurant)
+		restaurants = append(restaurants, restaurant)
 	}
 
 	if len(restaurants) == 0 {
 		return c.JSON(fiber.Map{
-			"restaurants": []string{}, 
+			"restaurants": []string{},
 		})
-	} 
-	fmt.Println("all restaurants kk", restaurants);	
-	return c.JSON(fiber.Map{"restaurants":restaurants})
+	}
+	fmt.Println("all restaurants kk", restaurants)
+	return c.JSON(fiber.Map{"restaurants": restaurants})
 
 }
 
 func UpdateRestaurantStatus(c *fiber.Ctx) error {
-    collection := config.GetCollection("restaurants")
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
+	collection := config.GetCollection("restaurants")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	idParam := c.Params("id")
+	restaurantID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid restaurant ID"})
+	}
+
+	var body struct {
+		Status string `json:"status"`
+	}
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	if body.Status != "approved" && body.Status != "rejected" && body.Status != "pending" {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid status value"})
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"status": body.Status,
+		},
+	}
+
+	result, err := collection.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to update status"})
+	}
+
+	if result.MatchedCount == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Restaurant not found"})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Restaurant status updated successfully",
+		"id":      idParam,
+		"status":  body.Status,
+	})
+}
+
+func ShowClaimButton(c *fiber.Ctx) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	userEmail := c.Locals("email").(string)
+	collection := config.GetCollection("restaurants")
+
+	count, err := collection.CountDocuments(ctx, bson.M{
+		"email":  userEmail,
+		"status": "approved",
+	})
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Server error"})
+	}
+
+	return c.JSON(fiber.Map{
+		"showClaimButton": count > 0,
+	})
+}
+
+func ClaimRestaurant(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// 1️ Get values from middleware
+	userIDStr := c.Locals("userID").(string)
+	userEmail := c.Locals("email").(string)
+
+	// 2️ Convert userID string -> ObjectID
+	userObjectID, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "Invalid user ID",
+		})
+	}
+
+	restaurantCollection := config.GetCollection("restaurants")
+	userCollection := config.GetCollection("users")
+
+	// 3️ Update restaurant (link user to restaurant)
+	restaurantUpdate, err := restaurantCollection.UpdateOne(
+		ctx,
+		bson.M{
+			"email":  userEmail,
+			"status": "approved",
+			"ownerId": bson.M{
+				"$exists": false,
+			},
+		},
+		bson.M{
+			"$set": bson.M{
+				"ownerId": userObjectID,
+			},
+		},
+	)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Failed to claim restaurant",
+		})
+	}
+
+	if restaurantUpdate.MatchedCount == 0 {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "No approved restaurant available to claim",
+		})
+	}
+
+	// 4️ Update user role
+	userUpdate, err := userCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": userObjectID},
+		bson.M{
+			"$set": bson.M{
+				"role": "restaurantOwner",
+			},
+		},
+	)
+
+	if err != nil || userUpdate.MatchedCount == 0 {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Failed to update user role",
+		})
+	}
+
 	
-    idParam := c.Params("id")
-    restaurantID, err := primitive.ObjectIDFromHex(idParam)
-    if err != nil {
-        return c.Status(400).JSON(fiber.Map{"error": "Invalid restaurant ID"})
-    }
-
-    var body struct {
-        Status string `json:"status"`
-    }
-
-    if err := c.BodyParser(&body); err != nil {
-        return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
-    }
-
-    if body.Status != "approved" && body.Status != "rejected" && body.Status != "pending" {
-        return c.Status(400).JSON(fiber.Map{"error": "Invalid status value"})
-    }
-
-    update := bson.M{
-        "$set": bson.M{
-            "status": body.Status,
-        },
-    }
-
-    result, err := collection.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
-    if err != nil {
-        return c.Status(500).JSON(fiber.Map{"error": "Failed to update status"})
-    }
-
-    if result.MatchedCount == 0 {
-        return c.Status(404).JSON(fiber.Map{"error": "Restaurant not found"})
-    }
-
-    return c.JSON(fiber.Map{
-        "message": "Restaurant status updated successfully",
-        "id":      idParam,
-        "status":  body.Status,
-    })
+	return c.JSON(fiber.Map{
+		"role":    "restaurantOwner",
+		"message": "Restaurant claimed successfully",
+	})
 }

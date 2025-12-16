@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface User {
   id: string;
   email: string;
-  role: "admin" | "user";
-  name:string
+  role: "admin" | "user" | "restaurantOwner";
+  name: string
 }
 
 interface UserState {
@@ -36,8 +36,14 @@ const userSlice = createSlice({
     finishLoading: (state) => {
       state.loading = false;
     },
+    updateUserRole: (state, action) => {
+      if (state.user) {
+        state.user.role = action.payload;
+      }
+    }
+
   },
 });
 
-export const { loginSuccess, logout, finishLoading } = userSlice.actions;
+export const { loginSuccess, logout, finishLoading,updateUserRole } = userSlice.actions;
 export default userSlice.reducer;
