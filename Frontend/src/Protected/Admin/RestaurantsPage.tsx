@@ -62,7 +62,7 @@ function RestaurantsPage() {
   return (
     <div className="h-full flex items-center justify-center py-4 xl:py-0">
       <div className="w-full flex items-center justify-center overflow-x-auto px-2">
-        <table className="border-separate min-w-full border-spacing-y-3 border-spacing-x-3 mx-auto pl-[300px] xl:pl-0">
+        <table className="border-separate min-w-full border-spacing-y-3 border-spacing-x-3 mx-auto pl-[400px] md:pl-0">
 
 
           <thead>
@@ -94,6 +94,18 @@ function RestaurantsPage() {
 
                 <div className="relative z-10 mt-6 flex flex-col items-center">
                   <span className="text-xl font-bold">Name</span>
+                </div>
+              </th>
+
+              <th className="relative p-6 w-[140px] xl:w-[180px]">
+                <span className="absolute inset-0 flex items-center justify-center 
+                   text-2xl lg:text-4xl font-extrabold text-orange-400
+                   pointer-events-none select-none">
+                  Payment
+                </span>
+
+                <div className="relative z-10 mt-6 flex flex-col items-center">
+                  <span className="text-xl font-bold">Status</span>
                 </div>
               </th>
 
@@ -139,6 +151,16 @@ function RestaurantsPage() {
                 <td className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                   {restaurant.ownerName}
                 </td>
+
+                <td className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold
+                    ${restaurant.paid === "paid" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {restaurant.paid}
+                  </span>
+
+                </td>
+
+
 
                 <td className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 text-center">
                   <span

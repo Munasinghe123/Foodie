@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"os"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -32,7 +33,15 @@ func AuthRequired(c *fiber.Ctx) error {
 		return c.Status(401).JSON(fiber.Map{"error": "Invalid userID in token"})
 	}
 
+	email, ok := claims["email"].(string)
+	if !ok || email == "" {
+		return c.Status(401).JSON(fiber.Map{"error": "Invalid email in token"})
+	}
+
 	c.Locals("userID", userID)
+	c.Locals("email", email)
+
+	fmt.Println("Authenticated user:", email, "with ID:", userID)
 
 	return c.Next()
 }

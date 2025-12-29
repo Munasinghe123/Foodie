@@ -3,13 +3,16 @@ import { Navigate } from "react-router-dom";
 import type { RootState } from "../store/store";
 import React from "react";
 
-export default function ProtectedRoute({ children, requiredRole }:
-    {
-        children: React.ReactNode;
-        requiredRole?: string;
-    }) {
-
-    const { isAuthenticated, loading, user } = useSelector((state: RootState) => state.user);
+export default function ProtectedRoute({
+    children,
+    requiredRole,
+}: {
+    children: React.ReactNode;
+    requiredRole?: string;
+}) {
+    const { isAuthenticated, loading, user } = useSelector(
+        (state: RootState) => state.user
+    );
 
     if (loading) {
         return <div className="text-center mt-10">Loading...</div>;
@@ -19,11 +22,18 @@ export default function ProtectedRoute({ children, requiredRole }:
         return <Navigate to="/get-started" replace />;
     }
 
-    if (requiredRole && requiredRole !== user?.role) {
+    if (requiredRole && !user) {
+        return <div className="text-center mt-10">Loading...</div>;
+    }
+
+    if (!user) {
+        return <div className="text-center mt-10">Loading...</div>;
+    }
+
+    if (requiredRole && user.role !== requiredRole) {
         return <Navigate to="/unauthorized" replace />;
     }
 
-
-
     return <>{children}</>;
 }
+

@@ -42,6 +42,8 @@ export default function GetStarted() {
                 return;
             }
 
+            console.log("registering", { name, userName, email, password });
+
             const response = await axios.post('http://localhost:7000/api/register', {
                 name, username: userName, email, password
             })
@@ -82,7 +84,10 @@ export default function GetStarted() {
 
             if(response.data.user.role === "admin"){
                 navigate('/admin');
-            }else{
+            }else if(response.data.user.role === "restaurantOwner"){
+                navigate("/restaurant-owner");
+            }
+            else{
                 navigate("/user");
             }
 

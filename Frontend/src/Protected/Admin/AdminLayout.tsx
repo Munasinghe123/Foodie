@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { Menu, X, Home, Users, Store, LogOut } from "lucide-react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { logout } from "../store/userSlice";
+import { logout } from "../../store/userSlice";
 
 export default function AdminLayout() {
   const [open, setOpen] = useState(false);
