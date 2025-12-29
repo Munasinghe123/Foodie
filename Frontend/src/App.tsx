@@ -13,11 +13,14 @@ import Success from "./Pages/Payment/Success"
 import RestaurantsPage from "./Protected/Admin/RestaurantsPage"
 import UsersPage from "./Protected/Admin/UsersPage"
 import Restaurants from "./Pages/Restaurants"
-import RestaurantOwner from "./Protected/Restaurant-Owner/RestaurantOwner"
+import RestaurantOwnerDashboard from "./Protected/Restaurant-Owner/RestaurantOwnerDashboard"
+import RestaurantOwnerLayout from "./Protected/Restaurant-Owner/RestaurantOwnerLayout"
+import AddFood from "./Protected/Restaurant-Owner/AddFood"
+import AllFood from "./Protected/Restaurant-Owner/AllFood"
 
 import AuthChecker from "./Auth/AuthChecker"
 import ProtectedRoute from "./Auth/ProtectedRoute"
-import AdminLayout from "./Components/AdminLayout"
+import AdminLayout from "./Protected/Admin/AdminLayout"
 
 import { Toaster } from 'react-hot-toast';
 
@@ -29,7 +32,6 @@ export default function App() {
 
   const { role } = useSelector((state: RootState) => state.user.user || { role: "" });
 
-
   return (
     <div>
       <Toaster position="top-right" reverseOrder={false} />
@@ -37,7 +39,7 @@ export default function App() {
       <BrowserRouter>
         <AuthChecker />
 
-        {role !== "admin" && (
+        {role !== "admin" && role !== "restaurantOwner" && (
           <Header />
         )}
 
@@ -49,6 +51,7 @@ export default function App() {
           <Route path="/register-resturant" element={<RegisterResturant />} />
           <Route path="/restaurants" element={<Restaurants />} />
           <Route path="/payment/success" element={<Success />} />
+          <Route path="/all-food/:restaurantId" element={<AllFood />} />
 
 
           {/* protected routes */}
@@ -70,12 +73,27 @@ export default function App() {
             <Route path="users" element={<UsersPage />} />
           </Route>
 
+          {/* restaurant owner routes */}
+          <Route
+            path="/restaurant-owner"
+            element={
+              <ProtectedRoute requiredRole="restaurantOwner">
+                {/* parent route */}
+                <RestaurantOwnerLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* default nested route */}
+            <Route index element={<RestaurantOwnerDashboard />} />
+            {/* other nested routes */}
+          </Route>
+          <Route path='/add-food/:restaurantId' element={<ProtectedRoute requiredRole="restaurantOwner"><AddFood /> </ProtectedRoute>} />
 
+          {/* user routes */}
           <Route path="/user" element={<ProtectedRoute ><UserDashboard /></ProtectedRoute>} />
-          <Route path="/restaurant-owner" element={<ProtectedRoute requiredRole="restaurantOwner"><RestaurantOwner /></ProtectedRoute>} />
 
         </Routes>
-        {role !== "admin" && <Footer />}
+        {role !== "admin" && role !== "restaurantOwner" && <Footer />}
 
       </BrowserRouter>
 

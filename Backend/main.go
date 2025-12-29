@@ -34,6 +34,7 @@ func main() {
 
 	routes.SetupRoutes(app)
 	routes.SetupResturantRoutes(app)
+	routes.SetupFoodRoutes(app)
 
 	port := os.Getenv("PORT")
 

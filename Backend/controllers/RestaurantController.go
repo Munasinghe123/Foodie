@@ -363,9 +363,64 @@ func ClaimRestaurant(c *fiber.Ctx) error {
 		})
 	}
 
-	
 	return c.JSON(fiber.Map{
 		"role":    "restaurantOwner",
 		"message": "Restaurant claimed successfully",
+	})
+}
+
+func GetMyRestaurants(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	//  Get userId from JWT middleware
+	userIDStr, ok := c.Locals("userID").(string)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	//  Convert string → ObjectID
+	userObjectID, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "Invalid user ID",
+		})
+	}
+
+	collection := config.GetCollection("restaurants")
+
+	//  Query restaurants owned by this user
+	cursor, err := collection.Find(ctx, bson.M{
+		"ownerId": userObjectID,
+	})
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Failed to fetch restaurants",
+		})
+	}
+	defer cursor.Close(ctx)
+
+	var restaurants []models.RestaurantModel
+
+	//  Decode results
+	for cursor.Next(ctx) {
+		var restaurant models.RestaurantModel
+		if err := cursor.Decode(&restaurant); err != nil {
+			return c.Status(500).JSON(fiber.Map{
+				"error": "Failed to decode restaurant",
+			})
+		}
+		restaurants = append(restaurants, restaurant)
+	}
+
+	//  Return empty array instead of null
+	if restaurants == nil {
+		restaurants = []models.RestaurantModel{}
+	}
+
+	return c.JSON(fiber.Map{
+		"restaurants": restaurants,
 	})
 }
