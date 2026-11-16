@@ -30,7 +30,7 @@ function BecomeAPartner() {
                   <button className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300 hover:scale-105 ">
-                    Register your resturant now
+                    Join Now
                     <ArrowRight className="mt-1" />
                   </button>
                 </Link>
@@ -56,7 +56,7 @@ function BecomeAPartner() {
               </div>
 
               <div className="flex gap-6 pt-2">
-                <Link to='/register-resturant'>
+                <Link to='/register-delivery-person'>
                   <button className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300 hover:scale-105 ">

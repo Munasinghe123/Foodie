@@ -32,7 +32,6 @@ function Hero() {
                                     <ArrowRight className="mt-1" />
                                 </button>
                             </Link>
-
                         </div>
                     </div>
                 </div>

@@ -1,13 +1,13 @@
-import HeroBackground from '../Images/hero-background.png';
+import HeroBackground from '../../Images/hero-background.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import FloatingInput from '../Components/FloatingInput';
+import FloatingInput from '../../Components/FloatingInput';
 import React, { useState, useEffect } from 'react';
 import { SquareUserRound, Mail, KeyRound, MoveRight, MoveLeft } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useDispatch }  from 'react-redux';
-import { loginSuccess } from '../store/userSlice';
+import { loginSuccess } from '../../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function GetStarted() {
@@ -203,13 +203,13 @@ export default function GetStarted() {
                                 <div className="text-center">
                                     <h2 className="text-3xl font-bold mb-4">You don't have an account?</h2>
                                     <p className="mb-6 text-white">Register with your personal details to use all features.</p>
-                                    <button onClick={() => setIsLogin(false)} className="px-6 py-2 border-2 border-white rounded-md hover:bg-white hover:text-orange-700 transition-colors">Register</button>
+                                    <button onClick={() => setIsLogin(false)} className="px-6 py-2 border-2 border-white rounded-md hover:bg-white hover:text-orange-700 transition-colors w-2xs">Register</button>
                                 </div>
                             ) : (
                                 <div className="text-center">
                                     <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
                                     <p className="mb-6 text-white">To stay connected, login with your information.</p>
-                                    <button onClick={() => setIsLogin(true)} className="px-6 py-2 border-2 border-white rounded-md hover:bg-white hover:text-orange-700 transition-colors">Login</button>
+                                    <button onClick={() => setIsLogin(true)} className="px-6 py-2 border-2 border-white rounded-md hover:bg-white hover:text-orange-700 transition-colors w-2xs">Login</button>
                                 </div>
                             )}
                         </div>

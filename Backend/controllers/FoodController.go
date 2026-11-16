@@ -20,6 +20,7 @@ func AddFood(c *fiber.Ctx) error {
 	var body struct {
 		Name         string  `json:"name"`
 		Price        float64 `json:"price"`
+		Description  string  `json:"description"`
 		RestaurantID string  `json:"restaurantId"`
 	}
 
@@ -43,6 +44,7 @@ func AddFood(c *fiber.Ctx) error {
 	food := bson.M{
 		"name":         body.Name,
 		"price":        body.Price,
+		"description":  body.Description,
 		"restaurantId": restaurantObjectID,
 		"createdAt":    time.Now(),
 	}

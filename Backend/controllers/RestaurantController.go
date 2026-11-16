@@ -112,7 +112,7 @@ func StripeCheckoutSession(c *fiber.Ctx) error {
 
 }
 
-func StripeWebhook(c *fiber.Ctx) error {
+func RestaurantWebhook(c *fiber.Ctx) error {
 	// Get the raw body - read it only once
 	payload := c.BodyRaw()
 
@@ -136,11 +136,11 @@ func StripeWebhook(c *fiber.Ctx) error {
 		},
 	)
 	if err != nil {
-		fmt.Printf("⚠️  Webhook signature verification failed: %v\n", err)
+		fmt.Printf("  Webhook signature verification failed: %v\n", err)
 		return c.Status(400).SendString(fmt.Sprintf("Webhook signature verification failed: %v", err))
 	}
 
-	fmt.Printf("✅ Webhook verified! Event type: %s\n", event.Type)
+	fmt.Printf(" Webhook verified! Event type: %s\n", event.Type)
 
 	// Handle the checkout.session.completed event
 	if event.Type == "checkout.session.completed" {
@@ -191,7 +191,7 @@ func StripeWebhook(c *fiber.Ctx) error {
 			return c.Status(404).SendString("Restaurant not found")
 		}
 
-		fmt.Printf("✅ Successfully updated restaurant %s to paid status\n", restaurantId)
+		fmt.Printf(" Successfully updated restaurant %s to paid status\n", restaurantId)
 	}
 
 	// Return 200 to acknowledge receipt of the event

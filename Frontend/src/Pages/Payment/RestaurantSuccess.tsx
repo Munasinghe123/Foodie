@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useLocation } from 'react-router-dom'
 
-function Success() {
+function RestaurantSuccess() {
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -15,4 +15,4 @@ function Success() {
   )
 }
 
-export default Success
+export default RestaurantSuccess
