@@ -1,5 +1,5 @@
 import React from 'react'
-import type { RootState } from '../../store/store';
+import type { RootState } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { useState } from 'react';

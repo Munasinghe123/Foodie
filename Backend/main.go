@@ -22,8 +22,9 @@ func main() {
 
 	app := fiber.New()
 
-	//webhook route
-	app.Post("/webhook", controllers.StripeWebhook)
+	//webhook routes
+	app.Post("/restaurantwebhook", controllers.RestaurantWebhook)
+	app.Post("/orderwebhook", controllers.OrderWebhook)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:5173",
@@ -35,6 +36,7 @@ func main() {
 	routes.SetupRoutes(app)
 	routes.SetupResturantRoutes(app)
 	routes.SetupFoodRoutes(app)
+	routes.SetupOrderRoutes(app)
 
 	port := os.Getenv("PORT")
 

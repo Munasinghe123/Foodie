@@ -5,17 +5,23 @@ import gsap from 'gsap';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../store/store';
-import { SquareUserRound, ChevronDown, Settings, User } from 'lucide-react';
+import type { RootState } from '../redux/store';
+import { SquareUserRound, ChevronDown, Settings, User, ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { logout } from '../store/userSlice';
+import { logout } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
+
 
 function Header() {
 
   const { isAuthenticated, user } = useSelector((state: RootState) => state.user);
+
+  const cartCount = useSelector((state: RootState) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  );
+
 
   const [scrolled, setScrolled] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -139,8 +145,30 @@ function Header() {
           <span>Contact</span>
         </div>
 
-        {/* Buttons */}
-        <div className="space-x-6 flex">
+        {/* Buttons and card */}
+        <div className="space-x-10 flex items-center">
+          {/* Cart */}
+          <Link to='/cart'>
+            <button
+              className="
+                relative p-3 rounded-full
+                bg-white/20 hover:bg-white/30
+                transition-all duration-200
+              "
+            >
+              <ShoppingCart className="text-white w-5 h-5" />
+
+              {/* items count*/}
+              <span className="
+                absolute -top-1 -right-1
+                w-5 h-5 text-xs
+                bg-orange-500 text-white
+                rounded-full flex items-center justify-center
+              ">
+                {cartCount}
+              </span>
+            </button>
+          </Link>
 
           {isAuthenticated ? (
 
@@ -215,7 +243,7 @@ function Header() {
               <button className="px-8 py-3 rounded-full flex items-center gap-2 
                                 bg-orange-500 text-white font-medium shadow-md
                                 hover:bg-orange-600 transition duration-300   hover:scale-105 ">
-                Get Started
+                Sign In
                 <ArrowRight className="mt-1" />
               </button>
             </Link>)}

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUserRole } from "../../store/userSlice";
-import type { RootState } from "../../store/store";
+import { updateUserRole } from "../../redux/userSlice";
+import type { RootState } from "../../redux/store";
 
 export default function UserDashboard() {
   const navigate = useNavigate();

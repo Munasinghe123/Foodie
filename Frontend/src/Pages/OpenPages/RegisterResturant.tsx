@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FloatingInput from "../Components/FloatingInput";
+import FloatingInput from "../../Components/FloatingInput";
 import {
   SquareUserRound,
   Phone,
